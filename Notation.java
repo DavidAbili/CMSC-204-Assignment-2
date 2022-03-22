@@ -1,225 +1,209 @@
-
 public class Notation extends Object {
-	
-	public Notation(){
-	
-	}
 
-	public static String convertPostfixToInfix(String postfix) throws InvalidNotationFormatException
-	, StackOverflowException, StackUnderflowException{
+public Notation(){
+}
+public static String convertPostfixToInfix(String postfix) throws InvalidNotationFormatException
+, StackOverflowException, StackUnderflowException{
 
-		MyStack<String> myStack = new MyStack<>(15);
+MyStack<String> myStack = new MyStack<>(15);
 
-		for(int i = 0; i < postfix.length(); i++) {
+for(int i = 0; i < postfix.length(); i++) {
 
-			char n = postfix.charAt(i);
+char n = postfix.charAt(i);
 
-			switch(n) {
+switch(n) {
 
-			case ' ': break;
-			case '0': case '1': case '2': case '3': case '4': 
-			case '5': case '6': case '7':case '8':case '9': 
-				myStack.push(n + "");
-				break;
+case ' ': break;
+case '0','1','2','3','4', '5', '6','7', '8', '9':
+myStack.push(n + "");
+break;
 
-			case '-': 				
-			case '+': 		
-			case '/': 
-			case '*': 
+case '-', '+', '/','*':
 
-				if (myStack.size() < 2)
-					throw new InvalidNotationFormatException();
+if (myStack.size() < 2)
+throw new InvalidNotationFormatException();
 
-				else {
+else {
 
-					String operand2 = (String) myStack.top();
-					myStack.pop();
-					String operand1 = (String) myStack.top();
-					myStack.pop();
+String operand2 = (String) myStack.top();
+myStack.pop();
+String operand1 = (String) myStack.top();
+myStack.pop();
 
-					String finalExp = "(" + operand1 + n + operand2 + ")";
+String finalExp = "(" + operand1 + n + operand2 + ")";
 
-					myStack.push(finalExp);}
-				break;
-			}
-		}
+myStack.push(finalExp);}
+break;
+}
+}
 
-		if (myStack.size() > 1)
-			throw new InvalidNotationFormatException();
-		else {
-			return (String) myStack.top();}
-	}
+if (myStack.size() > 1)
+throw new InvalidNotationFormatException();
+else {
+return (String) myStack.top();}
+}
 
-	public static String convertInfixToPostfix(String infix) throws InvalidNotationFormatException, QueueOverflowException
-	, StackOverflowException, StackUnderflowException{
+public static String convertInfixToPostfix(String infix) throws InvalidNotationFormatException, QueueOverflowException , StackOverflowException, StackUnderflowException
+{
 
-		MyStack<Character> theStack = new MyStack<Character>(15);
-		MyQueue<Character> theQueue = new MyQueue<Character>(15);
+MyStack<Character> theStack = new MyStack<Character>(15);
+MyQueue<Character> theQueue = new MyQueue<Character>(15);
 
-		int r = 0;
-		int l = 0;
+int r = 0;
+int l = 0;
 
-		for(int i = 0; i < infix.length(); i++) {
+for(int i = 0; i < infix.length(); i++) {
 
-			char n = infix.charAt(i);
+char n = infix.charAt(i);
 
-			switch(n) {
+switch(n) {
 
-			case ' ': break;
-			case '0': case '1': case '2': case '3': case '4': 
-			case '5': case '6': case '7':case '8':case '9': 
-				theQueue.enqueue(n) ;
-				break;
+case ' ': break;
+case '0','1','2','3','4', '5', '6','7', '8', '9':
+theQueue.enqueue(n) ;
+break;
 
-			case '(': 
-				l++;
-				theStack.push(n);
-				break;
+case '(':
+l++;
+theStack.push(n);
+break;
 
-			case'-': case '+':  case'/': case'*':
-				while ( order(n) <= order((char) theStack.top()) && !theStack.isEmpty() ) 
-				{
-					char operator = (char) theStack.top();
-					theQueue.enqueue(operator);
+case'-': case '+':  case'/': case'*':
+while ( order(n) <= order((char) theStack.top()) && !theStack.isEmpty() )
+{
+char operator = (char) theStack.top();
+theQueue.enqueue(operator);
 
-				}
-				theStack.push(n);
-				break;
+}
+theStack.push(n);
+break;
 
-			case ')':
-				r++;
-				while((char)theStack.top() != '(' && !theStack.isEmpty()) 
-				{
-					char topOperator = (char) theStack.pop();
-					theQueue.enqueue(topOperator);
-				}
+case ')':
+r++;
+while((char)theStack.top() != '(' && !theStack.isEmpty())
+{
+char topOperator = (char) theStack.pop();
+theQueue.enqueue(topOperator);
+}
 
-				if ( (char)theStack.top() == '(' && theStack.size() > 1)
-					theStack.pop();
-				break;
-			}
-		} 
+if ( (char)theStack.top() == '(' && theStack.size() > 1)
+theStack.pop();
+break;
+}
+}
 
-		if ( l != r)
-			throw new InvalidNotationFormatException ();
+if ( l != r)
+throw new InvalidNotationFormatException ();
 
-		while(!theStack.isEmpty()) 
-		{
+while(!theStack.isEmpty())
+{
 
-			if ((char)theStack.top() == '(')
-				theStack.pop();
-			else {
-				char top_Operator = (char) theStack.pop();
-				theQueue.enqueue( top_Operator);
-			}
-		}
+if ((char)theStack.top() == '(')
+theStack.pop();
+else {
+char top_Operator = (char) theStack.pop();
+theQueue.enqueue( top_Operator);
+}
+}
 
-		return theQueue.toString();
-	}
+return theQueue.toString();
+}
 
-	public static double evaluateInfixExpression(String infixExpr) throws InvalidNotationFormatException
-	, QueueOverflowException, StackOverflowException, StackUnderflowException{
+public static double evaluateInfixExpression(String infixExpr) throws InvalidNotationFormatException
+, QueueOverflowException, StackOverflowException, StackUnderflowException{
 
 
-		String post = convertInfixToPostfix(infixExpr);
+String post = convertInfixToPostfix(infixExpr);
 
-		double evaluatePost = evaluatePostfixExpression(post);
+double evaluatePost = evaluatePostfixExpression(post);
 
-		return evaluatePost;
-	}
+return evaluatePost;
+}
 
-	static int order(char val){
+static int order(char val){
 
-		switch ( val ) {
+switch ( val ) {
 
-		case '*':
-		case '/':
-			return 2;
+case '*', '/':
+return 2;
 
-		case '+':
-		case '-':
-			return 1;
+case '+', '-':
+return 1;
 
-		}
-		return -1;
-	}
+}
+return -1;
+}
 
 
-	public static double evaluatePostfixExpression(String postfixExpr) throws InvalidNotationFormatException, StackOverflowException, StackUnderflowException{
+public static double evaluatePostfixExpression(String postfixExpr) throws InvalidNotationFormatException, StackOverflowException, StackUnderflowException{
 
-		int op2 = 0;
-		int op1 = 0;
+int op2 = 0;
+int op1 = 0;
 
-		MyStack<Integer> myStack = new MyStack<>(30);
+MyStack<Integer> myStack = new MyStack<>(30);
 
-		for( int i=0; i < postfixExpr.length(); i++) {
+for( int i=0; i < postfixExpr.length(); i++) {
 
-			char n = postfixExpr.charAt(i);
+char n = postfixExpr.charAt(i);
 
-			switch(n) {
+switch(n) {
 
-			case ' ': break;
-			case '0': case '1': case '2': case '3': case '4': 
-			case '5': case '6': case '7':case '8':case '9': 
-				myStack.push(n - '0');
-				break;
+case ' ': break;
+case '0','1','2','3','4', '5', '6','7', '8', '9':
+myStack.push(n - '0');
+break;
 
-			case'-': 
-				if (myStack.size() < 2) {
-					throw new InvalidNotationFormatException();
-				}
-					
-				else {
-					op2 = (int) myStack.pop();
-					op1 = (int) myStack.pop();
-					myStack.push(op1 - op2);
-				}
-				break;	
+case'-':
+if (myStack.size() < 2) {
+throw new InvalidNotationFormatException();
+}
+else {
+op2 = (int) myStack.pop();
+op1 = (int) myStack.pop();
+myStack.push(op1 - op2);
+}
+break;
 
-			case '+': 
-				if (myStack.size() < 2) {
-						throw new InvalidNotationFormatException();
-				}
-				
-				else {
-					op2 = (int) myStack.pop();
-					op1 = (int) myStack.pop();
-					myStack.push(op1 + op2);
-				}
-				break;	
+case '+':
+if (myStack.size() < 2) {
+throw new InvalidNotationFormatException();
+}
+else {
+op2 = (int) myStack.pop();
+op1 = (int) myStack.pop();
+myStack.push(op1 + op2);
+}
+break;
 
-			case'*': 
-				if (myStack.size() < 2) {
-					throw new InvalidNotationFormatException();
-				}
-					
-				else {
-					op2 = (int) myStack.pop();
-					op1 = (int) myStack.pop();
-					myStack.push(op1 * op2);
-				}
-				break;
+case'*':
+if (myStack.size() < 2) {
+throw new InvalidNotationFormatException();
+}
+else {
+op2 = (int) myStack.pop();
+op1 = (int) myStack.pop();
+myStack.push(op1 * op2);
+}
+break;
 
-			case'/': 
-				if (myStack.size() < 2) {
-					throw new InvalidNotationFormatException();
-				}
-					
-				else {
-					op2= (int) myStack.pop();
-					op1 = (int) myStack.pop();
-					myStack.push(op1 / op2);
-				}
-				break;
+case'/':
+if (myStack.size() < 2) {
+throw new InvalidNotationFormatException();
+}
+else {
+op2= (int) myStack.pop();
+op1 = (int) myStack.pop();
+myStack.push(op1 / op2);
+}
+break;
 
-			}
-		}
+}
+}
 
-		if ( myStack.size() > 1) {
-			throw new InvalidNotationFormatException();
-		}
-			
+if ( myStack.size() > 1) {
+throw new InvalidNotationFormatException();
+}
 
-		return (double) myStack.pop();
-	}
+return (double) myStack.pop();
+}
 }
